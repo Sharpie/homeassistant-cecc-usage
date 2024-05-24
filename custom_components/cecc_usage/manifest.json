@@ -5,6 +5,7 @@
   "documentation": "https://github.com/Sharpie/homeassistant-cecc-usage/README.md",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
+  "config_flow": true,
   "codeowners": [],
   "dependencies": [],
   "requirements": []
