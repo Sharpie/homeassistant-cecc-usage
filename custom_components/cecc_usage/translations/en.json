@@ -10,6 +10,9 @@
         }
       }
     },
+    "abort": {
+      "already_configured": "This Carroll Electric account is already integrated."
+    },
     "error": {
       "invalid_account_number": "Account Number must be digits of the form: XXXXXX-XXX"
     }

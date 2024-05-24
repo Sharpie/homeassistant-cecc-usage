@@ -27,6 +27,9 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await self._validate_user_input(user_input, errors)
 
             if not errors:
+                await self.async_set_unique_id(user_input[CONF_USERNAME])
+                self._abort_if_unique_id_configured()
+
                 return self.async_create_entry(title=user_input[CONF_USERNAME], data=user_input)
 
         return self.async_show_form(step_id="user", data_schema=USER_SCHEMA, errors=errors)
