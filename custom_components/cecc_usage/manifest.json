@@ -2,7 +2,7 @@
   "domain": "cecc_usage",
   "name": "Carroll Electric Cooperative energy usage",
   "version": "0.0.1",
-  "documentation": "https://github.com/Sharpie/homeassistant-cecc-usage/README.md",
+  "documentation": "https://github.com/Sharpie/homeassistant-cecc-usage",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "config_flow": true,
