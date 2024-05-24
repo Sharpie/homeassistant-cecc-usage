@@ -3,11 +3,15 @@
     "step": {
       "user": {
         "title": "Carroll Electric Account",
+        "description": "Enter your Carroll Electric account details.\nYour account number must be provided instead of a username as the usage API requires it as an input.",
         "data": {
           "username": "Account Number (XXXXXX-XXX)",
           "password": "Password"
         }
       }
+    },
+    "error": {
+      "invalid_account_number": "Account Number must be digits of the form: XXXXXX-XXX"
     }
   }
 }
