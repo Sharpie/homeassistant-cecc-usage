@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Carroll Electric Account",
-        "description": "Enter your Carroll Electric account details.\n\nYour account number must be provided instead of a username as the usage API requires it as an input.\n\nThe URL of a Selenium server is required to automate interactions with the Carroll Electric website.",
+        "description": "Enter your Carroll Electric account details.\n\nYour account number must be provided instead of a username as the usage API requires it as an input.\n\nThe URL of a Selenium server is required to automate interactions with the Carroll Electric website.\n\nConfiguration of this integration may take several seconds or even minutes.",
         "data": {
           "username": "Account Number (XXXXXX-XXX)",
           "password": "Password",
@@ -16,7 +16,10 @@
     },
     "error": {
       "invalid_account_number": "Account Number must be digits of the form: XXXXXX-XXX",
-      "invalid_selenium_url": "Selenium server URL is not a valid URL"
+      "invalid_selenium_url": "Selenium server URL is not a valid URL",
+      "selenium_server_unreachable": "Selenium server did not respond at this URL. Check the URL is correct and the service is running.",
+      "selenium_server_bad_host": "Connection response was recieved, but does not appear to be from a Selenium server. Check the URL and relevant network configuration.",
+      "selenium_server_busy": "Timed out while waiting for a Selenium session. Check the service has not reached the max-sessions limit."
     }
   }
 }

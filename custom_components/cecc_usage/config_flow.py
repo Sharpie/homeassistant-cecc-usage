@@ -5,6 +5,10 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_HOST
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
 from .const import DOMAIN
+from .cecc import CarrollEccBrowser
+
+from urllib3.exceptions import MaxRetryError, ReadTimeoutError
+from selenium.common.exceptions import WebDriverException
 
 class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -20,6 +24,15 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.FqdnUrl()(user_input[CONF_HOST])
         except vol.UrlInvalid:
             errors[CONF_HOST] = 'invalid_selenium_url'
+
+        try:
+            await self.hass.async_add_executor_job(CarrollEccBrowser(user_input[CONF_HOST]).test_connection)
+        except MaxRetryError:
+            errors[CONF_HOST] = 'selenium_server_unreachable'
+        except WebDriverException:
+            errors[CONF_HOST] = 'selenium_server_bad_host'
+        except ReadTimeoutError:
+            errors[CONF_HOST] = 'selenium_server_busy'
 
     async def async_step_user(self, user_input: dict|None =None) -> config_entries.FlowResult:
         errors = {}
