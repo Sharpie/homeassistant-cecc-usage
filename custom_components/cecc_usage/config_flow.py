@@ -6,11 +6,6 @@ from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, Tex
 
 from .const import DOMAIN
 
-USER_SCHEMA = vol.Schema({vol.Required(CONF_USERNAME): str,
-                          vol.Required(CONF_PASSWORD):
-                              TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
-                          vol.Required(CONF_HOST, default='http://4b5c1810-selenium-ff.local.hass.io:4444'): str})
-
 class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     MINOR_VERSION = 1
@@ -38,5 +33,12 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 return self.async_create_entry(title=user_input[CONF_USERNAME], data=user_input)
 
-        return self.async_show_form(step_id="user", data_schema=USER_SCHEMA, errors=errors)
+        user_schema = vol.Schema({vol.Required(CONF_USERNAME, default=(user_input or {}).get(CONF_USERNAME)):
+                                      str,
+                                  vol.Required(CONF_PASSWORD):
+                                      TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
+                                  vol.Required(CONF_HOST, default=(user_input or {}).get(CONF_HOST,'http://4b5c1810-selenium-ff.local.hass.io:4444')):
+                                      str})
+
+        return self.async_show_form(step_id="user", data_schema=user_schema, errors=errors)
 
