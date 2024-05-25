@@ -3,10 +3,11 @@
     "step": {
       "user": {
         "title": "Carroll Electric Account",
-        "description": "Enter your Carroll Electric account details.\nYour account number must be provided instead of a username as the usage API requires it as an input.",
+        "description": "Enter your Carroll Electric account details.\n\nYour account number must be provided instead of a username as the usage API requires it as an input.\n\nThe URL of a Selenium server is required to automate interactions with the Carroll Electric website.",
         "data": {
           "username": "Account Number (XXXXXX-XXX)",
-          "password": "Password"
+          "password": "Password",
+	  "host": "Selenium server URL"
         }
       }
     },
@@ -14,7 +15,8 @@
       "already_configured": "This Carroll Electric account is already integrated."
     },
     "error": {
-      "invalid_account_number": "Account Number must be digits of the form: XXXXXX-XXX"
+      "invalid_account_number": "Account Number must be digits of the form: XXXXXX-XXX",
+      "invalid_selenium_url": "Selenium server URL is not a valid URL"
     }
   }
 }

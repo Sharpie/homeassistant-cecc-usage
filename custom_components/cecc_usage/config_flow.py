@@ -1,14 +1,15 @@
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_HOST
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
 from .const import DOMAIN
 
 USER_SCHEMA = vol.Schema({vol.Required(CONF_USERNAME): str,
                           vol.Required(CONF_PASSWORD):
-                              TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD))})
+                              TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
+                          vol.Required(CONF_HOST, default='http://4b5c1810-selenium-ff.local.hass.io:4444'): str})
 
 class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -19,6 +20,11 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             vol.Match(r'\d+-\d+')(user_input[CONF_USERNAME])
         except vol.MatchInvalid:
             errors[CONF_USERNAME] = "invalid_account_number"
+
+        try:
+            vol.FqdnUrl()(user_input[CONF_HOST])
+        except vol.UrlInvalid:
+            errors[CONF_HOST] = 'invalid_selenium_url'
 
     async def async_step_user(self, user_input: dict|None =None) -> config_entries.FlowResult:
         errors = {}
