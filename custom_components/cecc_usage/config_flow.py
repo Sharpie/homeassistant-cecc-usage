@@ -8,7 +8,7 @@ from .const import DOMAIN
 from .cecc import CarrollEccBrowser
 
 from urllib3.exceptions import MaxRetryError, ReadTimeoutError
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 
 class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -25,14 +25,25 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         except vol.UrlInvalid:
             errors[CONF_HOST] = 'invalid_selenium_url'
 
+        if errors:
+            # No sense in further testing bad credentials or host configuration.
+            return
+
+        test_browser = CarrollEccBrowser(user_input[CONF_HOST], user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+
         try:
-            await self.hass.async_add_executor_job(CarrollEccBrowser(user_input[CONF_HOST]).test_connection)
+            await self.hass.async_add_executor_job(test_browser.test_connection)
         except MaxRetryError:
             errors[CONF_HOST] = 'selenium_server_unreachable'
         except WebDriverException:
             errors[CONF_HOST] = 'selenium_server_bad_host'
         except ReadTimeoutError:
             errors[CONF_HOST] = 'selenium_server_busy'
+
+        try:
+            await self.hass.async_add_executor_job(test_browser.test_login)
+        except NoSuchElementException:
+            errors['base'] = 'login_failed'
 
     async def async_step_user(self, user_input: dict|None =None) -> config_entries.FlowResult:
         errors = {}

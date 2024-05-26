@@ -19,7 +19,8 @@
       "invalid_selenium_url": "Selenium server URL is not a valid URL",
       "selenium_server_unreachable": "Selenium server did not respond at this URL. Check the URL is correct and the service is running.",
       "selenium_server_bad_host": "Connection response was recieved, but does not appear to be from a Selenium server. Check the URL and relevant network configuration.",
-      "selenium_server_busy": "Timed out while waiting for a Selenium session. Check the service has not reached the max-sessions limit."
+      "selenium_server_busy": "Timed out while waiting for a Selenium session. Check the service has not reached the max-sessions limit.",
+      "login_failed": "Login to carrollecc.com was unsuccessful. Check account number and password."
     }
   }
 }
