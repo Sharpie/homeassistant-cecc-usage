@@ -19,8 +19,3 @@ class CarrollEccHass:
         test_browser = self._get_browser()
 
         await self.hass.async_add_executor_job(test_browser.test_connection)
-
-    async def test_login(self):
-        test_browser = self._get_browser()
-
-        await self.hass.async_add_executor_job(test_browser.test_login)

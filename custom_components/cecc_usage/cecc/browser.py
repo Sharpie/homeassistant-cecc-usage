@@ -1,6 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+from urllib3.exceptions import MaxRetryError, ReadTimeoutError
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
+from .exceptions import BrowserUnreachable, BrowserBadHost, BrowserBusy, InvalidLogin
+
 class CarrollEccBrowser:
     LOGIN_PAGE = 'https://myaccount.carrollecc.com/onlineportal/Customer-Login'
 
@@ -20,7 +24,15 @@ class CarrollEccBrowser:
         connection = webdriver.remote.remote_connection.RemoteConnection(self.host_port)
         connection.set_timeout(15)
 
-        browser = webdriver.Remote(command_executor = connection, options = options)
+        try:
+            browser = webdriver.Remote(command_executor = connection, options = options)
+        except MaxRetryError as e:
+            raise BrowserUnreachable from e
+        except WebDriverException as e:
+            raise BrowserBadHost from e
+        except ReadTimeoutError as e:
+            raise BrowserBusy from e
+
         browser.implicitly_wait(10)
 
         self._browser = browser
@@ -43,15 +55,13 @@ class CarrollEccBrowser:
         password.send_keys(self.password)
         submit_login.click()
 
-        browser.find_element(By.ID, 'dnn_ctr401_ContentPane')
+        try:
+            browser.find_element(By.ID, 'dnn_ctr401_ContentPane')
+        except NoSuchElementException as e:
+            raise InvalidLogin from e
+
 
     def test_connection(self):
-        try:
-            self._init_browser()
-        finally:
-            self._close_browser()
-
-    def test_login(self):
         try:
             self._init_browser()
             self._login()

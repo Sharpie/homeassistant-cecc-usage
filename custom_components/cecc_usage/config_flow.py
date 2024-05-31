@@ -6,9 +6,7 @@ from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, Tex
 
 from .const import DOMAIN
 from .cecc import CarrollEccHass
-
-from urllib3.exceptions import MaxRetryError, ReadTimeoutError
-from selenium.common.exceptions import WebDriverException, NoSuchElementException
+from .cecc.exceptions import BrowserUnreachable, BrowserBadHost, BrowserBusy, InvalidLogin
 
 class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -33,16 +31,13 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         try:
             await cecc.test_connection()
-        except MaxRetryError:
+        except BrowserUnreachable:
             errors[CONF_HOST] = 'selenium_server_unreachable'
-        except WebDriverException:
+        except BrowserBadHost:
             errors[CONF_HOST] = 'selenium_server_bad_host'
-        except ReadTimeoutError:
+        except BrowserBusy:
             errors[CONF_HOST] = 'selenium_server_busy'
-
-        try:
-            await cecc.test_login()
-        except NoSuchElementException:
+        except InvalidLogin:
             errors['base'] = 'login_failed'
 
     async def async_step_user(self, user_input: dict|None =None) -> config_entries.FlowResult:
