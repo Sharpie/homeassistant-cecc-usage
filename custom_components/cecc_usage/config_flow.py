@@ -5,7 +5,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_HOST
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
 from .const import DOMAIN
-from .cecc import CarrollEccBrowser
+from .cecc import CarrollEccHass
 
 from urllib3.exceptions import MaxRetryError, ReadTimeoutError
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
@@ -29,10 +29,10 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # No sense in further testing bad credentials or host configuration.
             return
 
-        test_browser = CarrollEccBrowser(user_input[CONF_HOST], user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+        cecc = CarrollEccHass(self.hass, user_input)
 
         try:
-            await self.hass.async_add_executor_job(test_browser.test_connection)
+            await cecc.test_connection()
         except MaxRetryError:
             errors[CONF_HOST] = 'selenium_server_unreachable'
         except WebDriverException:
@@ -41,7 +41,7 @@ class CeccUsageConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors[CONF_HOST] = 'selenium_server_busy'
 
         try:
-            await self.hass.async_add_executor_job(test_browser.test_login)
+            await cecc.test_login()
         except NoSuchElementException:
             errors['base'] = 'login_failed'
 
