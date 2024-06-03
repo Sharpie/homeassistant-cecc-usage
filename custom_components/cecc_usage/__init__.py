@@ -1,9 +1,19 @@
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .cecc import CarrollEccHass
+from .coordinator import CarrollEccCoordinator
 from .const import DOMAIN
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    hass.states.async_set("cecc_usage.message", "hello, world.")
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntityCallback) -> bool:
+    hass.data.setdefault(DOMAIN, {})
+
+    cecc_api = CarrollEccHass(hass, entry.data)
+    coordinator = CarrollEccCoordinator(hass, cecc_api)
+
+    hass.data[DOMAIN][cecc_api.account] = coordinator
+
+    await coordinator.async_config_entry_first_refresh()
 
     return True
