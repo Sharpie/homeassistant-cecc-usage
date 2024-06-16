@@ -1,4 +1,5 @@
 from homeassistant.core import HomeAssistant
+from homeassistant.const import Platform
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -15,5 +16,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     hass.data[DOMAIN][cecc_api.account] = coordinator
 
     await coordinator.async_config_entry_first_refresh()
+
+    await hass.config_entries.async_forward_entry_setups(entry, [Platform.SENSOR])
 
     return True
